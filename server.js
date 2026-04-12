@@ -91,8 +91,9 @@ app.post("/buyUpgrade", async (req, res) => {
     if (account.cookies >= cost) {
         account.cookies -= cost
         account.upgrades += 1
+        cost = account.upgrades * 2 + 20
+        await account.save()
     }
-    await account.save()
     res.json({cookies: account.cookies, upgrades: account.upgrades, cost: cost, rate: account.upgrades + 1})
 })
 
