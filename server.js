@@ -10,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(__dirname + "/client/build"));
 
 mongoose.connect(process.env.MONGO_URI);
 
@@ -25,7 +26,7 @@ const AccountSchema = new mongoose.Schema({
 const Account = mongoose.model("cookieaccounts", AccountSchema);
 
 app.get("/", (req, res) => {
-  res.send("Main");
+  res.sendFile(__dirname + "/client/build/index.html");
 });
 
 app.post("/getCookies", async (req, res) => {
@@ -68,7 +69,10 @@ app.post("/signup", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   let acc = await Account.find({ username: req.body.username });
-  if (acc.length > 0 && await bcrypt.compare(req.body.password, acc[0].password)) {
+  if (
+    acc.length > 0 &&
+    (await bcrypt.compare(req.body.password, acc[0].password))
+  ) {
     res.json({ accountData: acc[0], success: true });
   } else {
     res.json({ success: false });
