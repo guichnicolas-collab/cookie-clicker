@@ -1,20 +1,13 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import LogInSignUp from "./LogInSignUp";
 import "./App.css";
 import GamePage from "./GamePage";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      session: false,
-    };
-    this.signUp = this.signUp.bind(this);
-    this.logIn = this.logIn.bind(this);
-    this.logOut = this.logOut.bind(this);
-  }
-  componentDidMount() {
-    let accountId = localStorage.getItem("_id");
+function App() {
+  const [session, setSession] = useState(false);
+
+  useEffect(() => {
+    const accountId = localStorage.getItem("_id");
     fetch("session", {
       method: "POST",
       headers: {
@@ -29,11 +22,12 @@ class App extends React.Component {
       })
       .then((data) => {
         if (data.success) {
-          this.setState({ session: true });
+          setSession(true);
         }
       });
-  }
-  signUp(usernameInput, passwordInput, emailInput) {
+  }, []);
+
+  const signUp = useCallback((usernameInput, passwordInput, emailInput) => {
     fetch("signup", {
       method: "POST",
       headers: {
@@ -45,8 +39,9 @@ class App extends React.Component {
         email: emailInput,
       }),
     });
-  }
-  logIn(usernameInput, passwordInput) {
+  }, []);
+
+  const logIn = useCallback((usernameInput, passwordInput) => {
     fetch("login", {
       method: "POST",
       headers: {
@@ -62,22 +57,22 @@ class App extends React.Component {
       })
       .then((data) => {
         if (data.success) {
-          this.setState({ session: true });
+          setSession(true);
           localStorage.setItem("_id", data.accountData._id);
         }
       });
-  }
-  logOut() {
+  }, []);
+
+  const logOut = useCallback(() => {
     localStorage.removeItem("_id");
-    this.setState({ session: false });
+    setSession(false);
+  }, []);
+
+  let contentPage = <LogInSignUp signUp={signUp} logIn={logIn} />;
+  if (session) {
+    contentPage = <GamePage logOut={logOut} />;
   }
-  render() {
-    let contentPage = <LogInSignUp signUp={this.signUp} logIn={this.logIn} />;
-    if (this.state.session) {
-      contentPage = <GamePage logOut={this.logOut} />;
-    }
-    return <div>{contentPage}</div>;
-  }
+  return <div>{contentPage}</div>;
 }
 
 export default App;

@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/getCookies", async (req, res) => {
-  let account = await Account.findOne({ _id: req.body.accountId });
+  const account = await Account.findOne({ _id: req.body.accountId });
   res.json({
     cookies: account.cookies,
     cost: account.upgrades * 2 + 20,
@@ -39,22 +39,22 @@ app.post("/getCookies", async (req, res) => {
 });
 
 app.post("/getUpgrades", async (req, res) => {
-  let account = await Account.findOne({ _id: req.body.accountId });
+  const account = await Account.findOne({ _id: req.body.accountId });
   res.json({ upgrades: account.upgrades });
 });
 
 app.post("/signup", async (req, res) => {
   if (
-    req.body.username != "" ||
-    req.body.password != "" ||
-    req.body.email != ""
+    req.body.username !== "" ||
+    req.body.password !== "" ||
+    req.body.email !== ""
   ) {
-    let account = await Account.find({ username: req.body.username });
+      const account = await Account.find({ username: req.body.username });
     if (account.length > 0) {
       res.json({ success: false, message: "Username already taken!" });
     } else {
       const salt = await bcrypt.genSalt(10);
-      let acc = new Account({
+      const acc = new Account({
         username: req.body.username,
         password: await bcrypt.hash(req.body.password, salt),
         email: req.body.email,
@@ -68,7 +68,7 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  let acc = await Account.find({ username: req.body.username });
+  const acc = await Account.find({ username: req.body.username });
   if (
     acc.length > 0 &&
     (await bcrypt.compare(req.body.password, acc[0].password))
@@ -80,7 +80,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/session", async (req, res) => {
-  let acc = await Account.find({ _id: req.body.accountId });
+  const acc = await Account.find({ _id: req.body.accountId });
   if (acc.length > 0) {
     res.json({ success: true });
   } else {
@@ -89,14 +89,14 @@ app.post("/session", async (req, res) => {
 });
 
 app.post("/click", async (req, res) => {
-  let account = await Account.findOne({ _id: req.body.accountId });
+  const account = await Account.findOne({ _id: req.body.accountId });
   account.cookies += account.upgrades + 1;
   await account.save();
   res.json({ cookies: account.cookies });
 });
 
 app.post("/buyUpgrade", async (req, res) => {
-  let account = await Account.findOne({ _id: req.body.accountId });
+  const account = await Account.findOne({ _id: req.body.accountId });
   let cost = account.upgrades * 2 + 20;
   if (account.cookies >= cost) {
     account.cookies -= cost;
@@ -113,7 +113,7 @@ app.post("/buyUpgrade", async (req, res) => {
 });
 
 app.get("/getLeaderboard", async (req, res) => {
-  let topAccounts = await Account.find().sort({ upgrades: -1 }).limit(10);
+  const topAccounts = await Account.find().sort({ upgrades: -1 }).limit(10);
   res.json({ topAccounts: topAccounts });
 });
 

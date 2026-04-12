@@ -1,19 +1,13 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Leaderboard from "./Leaderboard";
 
-class GamePage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cookies: 0,
-      rate: 0,
-      cost: 0,
-    };
-    this.click = this.click.bind(this);
-    this.upgrade = this.upgrade.bind(this);
-  }
-  componentDidMount() {
-    let accountId = localStorage.getItem("_id");
+function GamePage({ logOut }) {
+  const [cookies, setCookies] = useState(0);
+  const [rate, setRate] = useState(0);
+  const [cost, setCost] = useState(0);
+
+  useEffect(() => {
+    const accountId = localStorage.getItem("_id");
     fetch("getCookies", {
       method: "POST",
       headers: {
@@ -27,15 +21,14 @@ class GamePage extends React.Component {
         return response.json();
       })
       .then((data) => {
-        this.setState({
-          cookies: data.cookies,
-          cost: data.cost,
-          rate: data.rate,
-        });
+        setCookies(data.cookies);
+        setCost(data.cost);
+        setRate(data.rate);
       });
-  }
-  click() {
-    let accountId = localStorage.getItem("_id");
+  }, []);
+
+  const click = useCallback(() => {
+    const accountId = localStorage.getItem("_id");
     fetch("click", {
       method: "POST",
       headers: {
@@ -49,13 +42,12 @@ class GamePage extends React.Component {
         return response.json();
       })
       .then((data) => {
-        this.setState({
-          cookies: data.cookies,
-        });
+        setCookies(data.cookies);
       });
-  }
-  upgrade() {
-    let accountId = localStorage.getItem("_id");
+  }, []);
+
+  const upgrade = useCallback(() => {
+    const accountId = localStorage.getItem("_id");
     fetch("buyUpgrade", {
       method: "POST",
       headers: {
@@ -69,53 +61,49 @@ class GamePage extends React.Component {
         return response.json();
       })
       .then((data) => {
-        this.setState({
-          cookies: data.cookies,
-          cost: data.cost,
-          rate: data.rate,
-        });
+        setCookies(data.cookies);
+        setCost(data.cost);
+        setRate(data.rate);
       });
-  }
+  }, []);
 
-  render() {
-    let navbarStyle = {
-      width: "100%",
-      height: "50px",
-      display: "flex",
-      justifyContent: "end",
-      backgroundColor: "blue",
-    };
-    let gameStyle = {
-      margin: "40px",
-    };
-    let pageStyle = {
-      display: "flex",
-      justifyContent: "space-around",
-    };
-    return (
-      <div>
-        <div style={navbarStyle}>
-          <button onClick={this.props.logOut}>Log Out</button>
-        </div>
-        <div style={pageStyle}>
-          <div style={gameStyle}>
-            <img
-              alt="Cookie"
-              src={require("./assets/Cookie.jpeg")}
-              onClick={this.click}
-              className="cookie"
-            />
-            <p>Cookies:{this.state.cookies}</p>
-            <p>Cookies per click: {this.state.rate}</p>
-            <button onClick={this.upgrade}>
-              Upgrade Cost:{this.state.cost} cookies
-            </button>
-          </div>
-          <Leaderboard />
-        </div>
+  const navbarStyle = {
+    width: "100%",
+    height: "50px",
+    display: "flex",
+    justifyContent: "end",
+    backgroundColor: "blue",
+  };
+  const gameStyle = {
+    margin: "40px",
+  };
+  const pageStyle = {
+    display: "flex",
+    justifyContent: "space-around",
+  };
+  return (
+    <div>
+      <div style={navbarStyle}>
+        <button onClick={logOut}>Log Out</button>
       </div>
-    );
-  }
+      <div style={pageStyle}>
+        <div style={gameStyle}>
+          <img
+            alt="Cookie"
+            src={require("./assets/Cookie.jpeg")}
+            onClick={click}
+            className="cookie"
+          />
+          <p>Cookies:{cookies}</p>
+          <p>Cookies per click: {rate}</p>
+          <button onClick={upgrade}>
+            Upgrade Cost:{cost} cookies
+          </button>
+        </div>
+        <Leaderboard />
+      </div>
+    </div>
+  );
 }
 
 export default GamePage;
