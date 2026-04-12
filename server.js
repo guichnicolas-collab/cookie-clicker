@@ -68,7 +68,7 @@ app.post("/signup", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   let acc = await Account.find({ username: req.body.username });
-  if (acc.length > 0 && bcrypt.compare(req.body.password, acc[0].password)) {
+  if (acc.length > 0 && await bcrypt.compare(req.body.password, acc[0].password)) {
     res.json({ accountData: acc[0], success: true });
   } else {
     res.json({ success: false });

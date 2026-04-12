@@ -15,7 +15,7 @@ class App extends React.Component {
   }
   componentDidMount() {
     let accountId = localStorage.getItem("_id");
-    fetch("http://localhost:3001/session", {
+    fetch("session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ class App extends React.Component {
       });
   }
   signUp(usernameInput, passwordInput, emailInput) {
-    fetch("http://localhost:3001/signup", {
+    fetch("signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,7 +47,7 @@ class App extends React.Component {
     });
   }
   logIn(usernameInput, passwordInput) {
-    fetch("http://localhost:3001/login", {
+    fetch("login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

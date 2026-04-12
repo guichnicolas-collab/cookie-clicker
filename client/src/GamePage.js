@@ -14,7 +14,7 @@ class GamePage extends React.Component {
   }
   componentDidMount() {
     let accountId = localStorage.getItem("_id");
-    fetch("http://localhost:3001/getCookies", {
+    fetch("getCookies", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ class GamePage extends React.Component {
   }
   click() {
     let accountId = localStorage.getItem("_id");
-    fetch("http://localhost:3001/click", {
+    fetch("click", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ class GamePage extends React.Component {
   }
   upgrade() {
     let accountId = localStorage.getItem("_id");
-    fetch("http://localhost:3001/buyUpgrade", {
+    fetch("buyUpgrade", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
